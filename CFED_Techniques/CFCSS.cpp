@@ -135,7 +135,16 @@ void CFCSS::insertSetup(){
  * CFE detection instructions at the beginning of the basic block
  */
 void CFCSS::insertSelBegin(unsigned int idBB, basic_block bb, rtx_insn* codeLabel, rtx_insn* attachBefore){
-	throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	//throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	unsigned int inEdges = countIncomingEdges(bb);
+	rtx_insn* prev = AsmGen::emitEorRegInt(regsToUse[0], diffSigs[idBB], attachBefore, bb, false);
+	if(inEdges > 1){
+		prev = insertEOR(prev, bb);
+	}
+	if(InstrType::isExitBlock(bb)){
+		prev = AsmGen::emitCmpRegInt(regsToUse[0], signatures[idBB], prev, bb, true);
+		AsmGen::emitBne(codeLabel, prev, bb, true);
+	}
 }
 
 /**
@@ -143,7 +152,8 @@ void CFCSS::insertSelBegin(unsigned int idBB, basic_block bb, rtx_insn* codeLabe
  * CFE detection instructions in the middle of the basic block
  */
 void CFCSS::insertSelMiddle(unsigned int idBB, basic_block bb, rtx_insn* codeLabel, rtx_insn* attachAfter){
-	throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	//throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	// Nothing to do for selective CFCSS
 }
 
 /**
@@ -151,7 +161,8 @@ void CFCSS::insertSelMiddle(unsigned int idBB, basic_block bb, rtx_insn* codeLab
  * CFE detection instructions at the end of the basic block
  */
 void CFCSS::insertSelEnd(unsigned int idBB, basic_block bb, rtx_insn* codeLabel){
-	throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	//throw "Selective implementation for CFCSS not officially supported and therefore not implemented!";
+	insertEnd(idBB, bb, codeLabel);
 }
 
 /**

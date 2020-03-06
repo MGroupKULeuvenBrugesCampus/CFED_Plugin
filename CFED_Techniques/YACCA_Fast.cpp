@@ -108,7 +108,10 @@ void YACCA_Fast::insertSetup(){
  * CFE detection instructions at the beginning of the basic block
  */
 void YACCA_Fast::insertSelBegin(unsigned int idBB, basic_block bb, rtx_insn* codeLabel, rtx_insn* attachBefore){
-	throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	//throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	if (InstrType::isExitBlock(bb)){
+		generateTest(idBB, bb, codeLabel, attachBefore, false);
+	}
 }
 
 /**
@@ -116,7 +119,8 @@ void YACCA_Fast::insertSelBegin(unsigned int idBB, basic_block bb, rtx_insn* cod
  * CFE detection instructions in the middle of the basic block
  */
 void YACCA_Fast::insertSelMiddle(unsigned int idBB, basic_block bb, rtx_insn* codeLabel, rtx_insn* attachAfter){
-	throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	//throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	// Nothing to do for selective YACCA_Fast
 }
 
 /**
@@ -124,7 +128,14 @@ void YACCA_Fast::insertSelMiddle(unsigned int idBB, basic_block bb, rtx_insn* co
  * CFE detection instructions at the end of the basic block
  */
 void YACCA_Fast::insertSelEnd(unsigned int idBB, basic_block bb, rtx_insn* codeLabel){
-	throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	//throw "Selective implementation for YACCA_Fast not officially supported and therefore not implemented!";
+	if( !(InstrType::isExitBlock(bb) && nrOfOrigInstr[idBB] == 1 ) ) {
+		rtx_insn* prev = UpdatePoint::lastRealSafeINSN(bb);
+		if(M1Values[idBB] != -1){
+			prev = AsmGen::emitAndRegInt(regsToUse[0], M1Values[idBB], prev, bb, true);
+		}
+		AsmGen::emitEorRegInt(regsToUse[0], M2Values[idBB], prev, bb, true);
+	}
 }
 
 /**
